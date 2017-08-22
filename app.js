@@ -5,8 +5,8 @@ var mongoose    = require("mongoose");
 
 app.use(bodyParser.urlencoded({extended:true}))
 app.set("view engine", "ejs");
-mongoose.connect("mongodb://localhost/yelp_camp");
-
+//mongoose.connect("mongodb://localhost/yelp_camp");
+mongoose.connect("mongodb://shreyasdb:shreyas123@ds151153.mlab.com:51153/yelpcampnew");
 //schema setup
 
 var campgroundSchema = new mongoose.Schema({
@@ -37,7 +37,7 @@ app.get("/",function(req,res){
    res.render("landing"); 
 });
 
-app.get("/campgrounds",function(req,res){
+app.get("/index",function(req,res){
     Campground.find({},function(err,allCampground)
     {
         if(err)
@@ -50,14 +50,14 @@ app.get("/campgrounds",function(req,res){
 });
 
 
-app.get("/campgrounds/new",function(req,res)
+app.get("/index/new",function(req,res)
 {
     res.render("new");
     
 });
 
 
-app.post("/campgrounds", function(req,res){
+app.post("/index", function(req,res){
     
  //var newcamp = JSON.parse(req.body.name);
  //console.log(newcamp);
@@ -74,7 +74,7 @@ app.post("/campgrounds", function(req,res){
      }
      else
      {
-     res.redirect("/index");
+     res.redirect("index");
        
      }
  })
