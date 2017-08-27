@@ -1,99 +1,57 @@
-var app         = require("express")();
-var request     = require("request");
-var bodyParser  =require("body-parser");
-var mongoose    = require("mongoose");
+var express             =   require("express");
+var request             =   require("request");
+var bodyParser          =   require("body-parser");
+var mongoose            =   require("mongoose");
+var Campground          =   require("./models/campgrounds");
+var Comment             =   require("./models/comments");
+var SeedDB              =   require("./seeds")
+var User                =   require("./models/user")
+var app                 =   express();
+var passport            =   require("passport");
+var LocalStrategy       =   require("passport-local");
+var commentRoutes       =   require("./routes/comments");
+var campgroundRoutes    =   require("./routes/campgrounds");
+var indexRoutes         =   require("./routes/index");
 
-app.use(bodyParser.urlencoded({extended:true}))
+
+app.use(bodyParser.urlencoded({extended:true}));
 app.set("view engine", "ejs");
+//db setup
 //mongoose.connect("mongodb://localhost/yelp_camp");
 mongoose.connect("mongodb://shreyasdb:shreyas123@ds151153.mlab.com:51153/yelpcampnew");
-//schema setup
 
-var campgroundSchema = new mongoose.Schema({
-    name : String,
-    img  : String,
-    description : String
-});
+//SeedDB();
 
-var Campground = mongoose.model("Campground",campgroundSchema);
-
-// Campground.create(
-//     {name : "purple trail ", 
-//     img:"http://tremendouswallpapers.com/wp-content/uploads/2015/07/Fresh-atmosphere-computers-desktop-wallpaper-640x480.jpg",
-//     description : "this is a huge reserve open with alot of wild life"},
-
-//  function(err,campground)
-//     {
-//         if(err)
-//         {console.log(err);}
-//         else
-//         {console.log("campgroud added ");
-//             console.log(campground);
-//         }
-//     });
+app.use(express.static(__dirname+"/public"));
 
 
-app.get("/",function(req,res){
-   res.render("landing"); 
-});
 
-app.get("/index",function(req,res){
-    Campground.find({},function(err,allCampground)
+//passport config
+app.use(require("express-session")(
     {
-        if(err)
-        {console.log(err);}
-        else
-        {res.render("index",{campgrounds:allCampground});
-        }
-    })
-    
-});
+    secret :"campers",
+    resave :false,
+    saveUninitialized :false
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 
-app.get("/index/new",function(req,res)
-{
-    res.render("new");
-    
-});
+app.use(function(req,res,next){
+   res.locals.currentUser = req.user;
+   next();
+});//middleware//whatever we give in res.locals will be available niside template
 
 
-app.post("/index", function(req,res){
-    
- //var newcamp = JSON.parse(req.body.name);
- //console.log(newcamp);
- var name = req.body.name;
- var img = req.body.img;
- var description = req.body.description;
- var newcamp= {name :name ,img:img, description:description}
- 
- Campground.create(newcamp, function(err,newlycamp)
- {
-     if(err)
-     {
-         console.log(err);
-     }
-     else
-     {
-     res.redirect("index");
-       
-     }
- })
- 
-});
+
+app.use("/",indexRoutes);
+app.use("/campgrounds",campgroundRoutes);
+app.use("/campgrounds/:id/comments",commentRoutes);
 
 
-app.get("/campgrounds/:id",function(req,res){
-   Campground.findById(req.params.id, function(err,foundCampground)
-   {
-       if(err){console.log(err);}
-       else
-       {
-        res.render("show", {campground:foundCampground});
-        
-       }
-   }) 
-   var campid = req.params.id;
-});
 
 app.listen(process.env.PORT,process.env.IP ,function(){
     console.log("yelp camp is up");
