@@ -1,7 +1,7 @@
 var mongoose = require("mongoose");
 
 
-mongoose.connect("mongodb://localhost/yelp_camp");
+//mongoose.connect("mongodb://localhost/yelp_camp");
 var commentSchema = new mongoose.Schema({
     text:String,
     author : {

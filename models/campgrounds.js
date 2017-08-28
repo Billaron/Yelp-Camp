@@ -1,7 +1,7 @@
 var mongoose    = require("mongoose");
 
 
-mongoose.connect("mongodb://localhost/yelp_camp");
+//mongoose.connect("mongodb://localhost/yelp_camp");
 
 var campgroundSchema = new mongoose.Schema({
     name        : String,
