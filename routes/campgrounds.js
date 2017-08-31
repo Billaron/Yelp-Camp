@@ -4,6 +4,14 @@ var Campground = require("../models/campgrounds");
 var Comment = require("../models/comments");
 var User = require("../models/user");
 var middleware = require("../middleware/index")
+var geocoder = require("geocoder");
+var moment = require("moment");
+
+function escapeRegex(text) {
+    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
+};
+
+
 //=======
 //Campgrounds Routes
 //=======
@@ -39,8 +47,13 @@ var img = req.body.img;
 var description = req.body.description;
 var price  = req.body.price;
 var author = { id :req.user.id, username :req.user.username};
+geocoder.geocode(req.body.location, function (err, data) 
+{
+    var lat = data.results[0].geometry.location.lat;
+    var lng = data.results[0].geometry.location.lng;
+    var location = data.results[0].formatted_address;
 
-var newcamp= {name :name ,img:img, description:description , author :author, price:price};
+var newcamp= {name :name ,img:img, description:description , author :author, price:price, location: location, lat: lat, lng: lng};
  
  Campground.create(newcamp, function(err,newlycamp)
  {
@@ -55,6 +68,7 @@ var newcamp= {name :name ,img:img, description:description , author :author, pri
      }
  });
  
+});
 });
 
 //show
@@ -93,7 +107,16 @@ router.get("/:id/edit",middleware.checkCampgroundOwnership,function(req,res){
 
 router.put("/:id",middleware.checkCampgroundOwnership, function(req,res)
 {
-    Campground.findByIdAndUpdate(req.params.id,req.body.campground,function(err,updatedCampground)
+    geocoder.geocode(req.body.location, function (err, data) {
+        if (err)
+        {console.log(err)}
+        else {
+        var lat = data.results[0].geometry.location.lat;
+        var lng = data.results[0].geometry.location.lng;
+        var location = data.results[0].formatted_address;
+        var newData = {name: req.body.name, image: req.body.image, description: req.body.description, cost: req.body.cost, location: location, lat: lat, lng: lng};
+       
+    Campground.findByIdAndUpdate(req.params.id,{$set :newData},function(err,updatedCampground)
     {
         if(err){
     
@@ -103,10 +126,10 @@ router.put("/:id",middleware.checkCampgroundOwnership, function(req,res)
             res.redirect("/campgrounds/"+req.params.id);
         }
     });
-});
+}});
 //destroy
 router.delete("/:id",middleware.checkCampgroundOwnership, function(req,res){
-  
+   
     Campground.findByIdAndRemove(req.params.id,function(err)
     {
         if(err)
@@ -119,6 +142,6 @@ router.delete("/:id",middleware.checkCampgroundOwnership, function(req,res){
     });
 });
 
-
+});
 
 module.exports = router;

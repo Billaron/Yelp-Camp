@@ -21,3 +21,7 @@
     bottom : 0;
     padding : 0vh;
 }
+#map{
+    height: 400px;
+    width : 265px;
+}

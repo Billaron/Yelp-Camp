@@ -9,6 +9,7 @@
                 <li class ="list-group-item">Info 2</li>
                 <li class ="list-group-item">Info 3</li>
             </div>
+        <div id= "map"></div>
         </div>
         <div class = "col-md-9">
             <div class="thumbnail">
@@ -16,9 +17,10 @@
                 <div class="caption-full">
                     <h4 class="pull-right">$<%=campground.price%>/Night</h4>
                     <h4><a><%=campground.name%></a></h4>
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.18.1/moment.min.js"></script>
                     <h6 class ="pull-right">created by "<%=campground.author.username%>"</h6> 
                     <p> <%=campground.description%></p>    
-                 
+            
                 <div>   
                 <%  if(currentUser && campground.author.id.equals(currentUser.id)){ %>
                 
@@ -57,4 +59,35 @@
         </div>
     </div>
 </div>
+
+<script>
+  function initMap() {
+    var lat = <%= campground.lat %>;
+    var lng = <%= campground.lng %>;
+    var center = {lat: lat, lng: lng };
+    var map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 8,
+        center: center,
+        scrollwheel: false
+    });
+    var contentString = `
+      <strong><%= campground.name %><br />
+      <%= campground.location %></strong>
+      <p><%= campground.description %></p>
+    `
+    var infowindow = new google.maps.InfoWindow({
+      content: contentString
+    });
+    var marker = new google.maps.Marker({
+        position: center,
+        map: map
+    });
+    marker.addListener('click', function() {
+      infowindow.open(map, marker);
+    });
+  }
+</script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBH3dyeFvEapnqGKO_LleB-oA0jgOLQTug&callback=initMap"></script>
+
+
 <%include ../partials/footer%>

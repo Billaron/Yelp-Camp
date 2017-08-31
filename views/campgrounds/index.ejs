@@ -3,7 +3,7 @@
     
     <header class= "jumbotron"> 
         <div class = "container">
-            <h1>Welcome to Yelp Camp!</h1>
+            <h1> <span class="glyphicon glyphicon-tent"></span>Welcome to Yelp Camp!</h1>
             <p> have a look at your campgrounds near your prefered area</p>
             
             <p>
@@ -11,6 +11,13 @@
             
              
             </p>
+            <p>
+              <form action="/campgrounds" method="GET" class="form-inline" id="campground-search">
+                <div class="form-group">
+                  <input type="text" name="search" placeholder="Campground search..." class="form-control">
+                </div>
+              </form>
+             </p>
         </div>
     </header>
      

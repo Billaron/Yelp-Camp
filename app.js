@@ -16,9 +16,10 @@ var methodOverride      =   require("method-override");
 var flash               =   require("connect-flash");
 app.use(bodyParser.urlencoded({extended:true}));
 app.set("view engine", "ejs");
+
 //db setup
-//mongoose.connect("mongodb://localhost/yelp_camp");
-mongoose.connect("mongodb://shreyasdb:shreyas123@ds151153.mlab.com:51153/yelpcampnew");
+mongoose.connect("mongodb://localhost/yelp_camp");
+//mongoose.connect("mongodb://shreyasdb:shreyas123@ds151153.mlab.com:51153/yelpcampnew");
 
 //SeedDB();
 app.use(methodOverride("_method"));
