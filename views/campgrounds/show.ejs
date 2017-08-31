@@ -14,9 +14,9 @@
             <div class="thumbnail">
                 <img class="img-responsive" src = "<%= campground.img%>" >
                 <div class="caption-full">
-                    <h4 class="pull-right">$9.00/Night</h4>
+                    <h4 class="pull-right">$<%=campground.price%>/Night</h4>
                     <h4><a><%=campground.name%></a></h4>
-                    <h6 class ="pull-right">created by "<%=campground.author.username%>"</h6> 
+                    <h6 class ="pull-right">created by "$<%=campground.author.username%>"</h6> 
                     <p> <%=campground.description%></p>    
                  
                 <div>   

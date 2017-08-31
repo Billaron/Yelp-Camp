@@ -13,17 +13,19 @@ var commentRoutes       =   require("./routes/comments");
 var campgroundRoutes    =   require("./routes/campgrounds");
 var indexRoutes         =   require("./routes/index");
 var methodOverride      =   require("method-override");
-
+var flash               =   require("connect-flash");
 app.use(bodyParser.urlencoded({extended:true}));
 app.set("view engine", "ejs");
 //db setup
-//ongoose.connect("mongodb://localhost/yelp_camp");
+//mongoose.connect("mongodb://localhost/yelp_camp");
 mongoose.connect("mongodb://shreyasdb:shreyas123@ds151153.mlab.com:51153/yelpcampnew");
 
 //SeedDB();
 app.use(methodOverride("_method"));
 app.use(express.static(__dirname+"/public"));
 
+
+app.use(flash());
 
 
 //passport config
@@ -42,8 +44,11 @@ passport.deserializeUser(User.deserializeUser());
 
 app.use(function(req,res,next){
    res.locals.currentUser = req.user;
+   res.locals.error   = req.flash("error");
+   res.locals.success = req.flash("success");
    next();
 });//middleware//whatever we give in res.locals will be available niside template
+
 
 
 
